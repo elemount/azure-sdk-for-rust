@@ -39,7 +39,7 @@ azure_identity = { path = "../identity" }
 reqwest = "0.11"
 
 [features]
-default = ["account", "blob", "queue", "table", "data_lake"]
+default = ["account", "blob", "queue", "table", "data_lake", "file"]
 test_e2e = ["account", "blob", "queue", "table", "data_lake"]
 test_integration = ["account", "blob", "queue", "table", "data_lake"]
 account = []
@@ -48,6 +48,7 @@ blob = []
 queue = []
 table = []
 data_lake = []
+file = []
 
 # This section specifies the required features for the examples.
 [[example]]

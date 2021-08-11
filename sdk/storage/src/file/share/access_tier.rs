@@ -5,7 +5,8 @@ create_enum!(
     AccessTier,
     (Hot, "Hot"),
     (Cool, "Cool"),
-    (Archive, "Archive")
+    (TransactionOptimized, "TransactionOptimized"),
+    (Premium, "Premium")
 );
 
 impl AddAsHeader for AccessTier {

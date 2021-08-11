@@ -49,6 +49,7 @@ pub struct StorageAccountClient {
     storage_credentials: StorageCredentials,
     http_client: Arc<dyn HttpClient>,
     blob_storage_url: Url,
+    file_storage_url: Url,
     table_storage_url: Url,
     queue_storage_url: Url,
     queue_storage_secondary_url: Url,
@@ -89,6 +90,8 @@ impl StorageAccountClient {
                 .unwrap(),
             table_storage_url: Url::parse(&format!("https://{}.table.core.windows.net", &account))
                 .unwrap(),
+            file_storage_url:  Url::parse(&format!("https://{}.file.core.windows.net", &account))
+                .unwrap(),
             queue_storage_url: Url::parse(&format!("https://{}.queue.core.windows.net", &account))
                 .unwrap(),
             queue_storage_secondary_url: Url::parse(&format!(
@@ -107,6 +110,7 @@ impl StorageAccountClient {
     pub fn new_emulator(
         http_client: Arc<dyn HttpClient>,
         blob_storage_url: &Url,
+        file_storage_url: &Url,
         table_storage_url: &Url,
         queue_storage_url: &Url,
         filesystem_url: &Url,
@@ -114,6 +118,7 @@ impl StorageAccountClient {
         Self::new_emulator_with_account(
             http_client,
             blob_storage_url,
+            file_storage_url,
             table_storage_url,
             queue_storage_url,
             filesystem_url,
@@ -128,10 +133,12 @@ impl StorageAccountClient {
         let blob_storage_url = Url::parse("http://127.0.0.1:10000").unwrap();
         let queue_storage_url = Url::parse("http://127.0.0.1:10001").unwrap();
         let table_storage_url = Url::parse("http://127.0.0.1:10002").unwrap();
+        let file_storage_url = Url::parse("http://127.0.0.1:10003").unwrap();
         let filesystem_url = Url::parse("http://127.0.0.1:10004").unwrap();
         Self::new_emulator(
             http_client,
             &blob_storage_url,
+            &file_storage_url,
             &table_storage_url,
             &queue_storage_url,
             &filesystem_url,
@@ -141,6 +148,7 @@ impl StorageAccountClient {
     pub fn new_emulator_with_account<A, K>(
         http_client: Arc<dyn HttpClient>,
         blob_storage_url: &Url,
+        file_storage_url: &Url,
         table_storage_url: &Url,
         queue_storage_url: &Url,
         filesystem_url: &Url,
@@ -154,6 +162,8 @@ impl StorageAccountClient {
         let account = account.into();
         let blob_storage_url =
             Url::parse(&format!("{}{}", blob_storage_url.as_str(), account)).unwrap();
+        let file_storage_url =
+            Url::parse(&format!("{}{}", file_storage_url.as_str(), account)).unwrap();        
         let table_storage_url =
             Url::parse(&format!("{}{}", table_storage_url.as_str(), account)).unwrap();
         let queue_storage_url =
@@ -163,6 +173,7 @@ impl StorageAccountClient {
 
         Arc::new(Self {
             blob_storage_url,
+            file_storage_url,
             table_storage_url,
             queue_storage_url: queue_storage_url.clone(),
             queue_storage_secondary_url: queue_storage_url,
@@ -185,6 +196,7 @@ impl StorageAccountClient {
 
         Ok(Arc::new(Self {
             blob_storage_url: Url::parse(&format!("https://{}.blob.core.windows.net", &account))?,
+            file_storage_url: Url::parse(&format!("https://{}.file.core.windows.net", &account))?,
             table_storage_url: Url::parse(&format!("https://{}.table.core.windows.net", &account))?,
             queue_storage_url: Url::parse(&format!("https://{}.queue.core.windows.net", &account))?,
             queue_storage_secondary_url: Url::parse(&format!(
@@ -213,6 +225,8 @@ impl StorageAccountClient {
 
         Arc::new(Self {
             blob_storage_url: Url::parse(&format!("https://{}.blob.core.windows.net", &account))
+                .unwrap(),
+            file_storage_url: Url::parse(&format!("https://{}.file.core.windows.net", &account))
                 .unwrap(),
             table_storage_url: Url::parse(&format!("https://{}.table.core.windows.net", &account))
                 .unwrap(),
@@ -252,6 +266,7 @@ impl StorageAccountClient {
                         sas_token,
                     )?),
                     blob_storage_url: get_endpoint_uri(blob_endpoint, account, "blob")?,
+                    file_storage_url: get_endpoint_uri(file_endpoint, account, "file")?,
                     table_storage_url: get_endpoint_uri(table_endpoint, account, "table")?,
                     queue_storage_url: get_endpoint_uri(queue_endpoint, account, "queue")?,
                     queue_storage_secondary_url: get_endpoint_uri(queue_endpoint, &format!("{}-secondary", account), "queue")?,
@@ -270,6 +285,7 @@ impl StorageAccountClient {
             } => Ok(Arc::new(Self {
                 storage_credentials: StorageCredentials::SASToken(get_sas_token_parms(sas_token)?),
                 blob_storage_url: get_endpoint_uri(blob_endpoint, account, "blob")?,
+                file_storage_url: get_endpoint_uri(file_endpoint, account, "file")?,
                 table_storage_url: get_endpoint_uri(table_endpoint, account, "table")?,
                 queue_storage_url: get_endpoint_uri(queue_endpoint, account, "queue")?,
                 queue_storage_secondary_url: get_endpoint_uri(queue_endpoint, &format!("{}-secondary", account), "queue")?,
@@ -287,6 +303,7 @@ impl StorageAccountClient {
             } => Ok(Arc::new(Self {
                 storage_credentials: StorageCredentials::Key(account.to_owned(), key.to_owned()),
                 blob_storage_url: get_endpoint_uri(blob_endpoint, account, "blob")?,
+                file_storage_url: get_endpoint_uri(file_endpoint, account, "file")?,
                 table_storage_url: get_endpoint_uri(table_endpoint, account, "table")?,
                 queue_storage_url: get_endpoint_uri(queue_endpoint, account, "queue")?,
                 queue_storage_secondary_url: get_endpoint_uri(queue_endpoint, &format!("{}-secondary", account), "queue")?,
@@ -308,6 +325,10 @@ impl StorageAccountClient {
 
     pub fn blob_storage_url(&self) -> &Url {
         &self.blob_storage_url
+    }
+
+    pub fn file_storage_url(&self) -> &Url {
+        &self.file_storage_url
     }
 
     pub fn table_storage_url(&self) -> &Url {
