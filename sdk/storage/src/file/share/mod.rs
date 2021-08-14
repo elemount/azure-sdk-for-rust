@@ -10,7 +10,6 @@ use azure_core::headers::{
 };
 use azure_core::incompletevector::IncompleteVector;
 use chrono::{DateTime, Utc};
-use http::request::Builder;
 use http::{header, HeaderMap};
 use std::collections::HashMap;
 use std::str::FromStr;
@@ -19,7 +18,7 @@ use xml::{Element, Xml};
 #[derive(Debug, Clone)]
 pub struct Share {
     pub name: String,
-    pub snapshot: Option<DateTime<Utc>>,
+    pub snapshot: Option<String>,
     pub version: Option<String>,
     pub deleted: bool,
     pub last_modified: DateTime<Utc>,
@@ -156,7 +155,7 @@ impl Share {
 
     fn parse(elem: &Element) -> Result<Share, crate::Error> {
         let name = cast_must::<String>(elem, &["Name"])?;
-        let snapshot = cast_optional::<DateTime<Utc>>(elem, &["Snapshot"])?;
+        let snapshot = cast_optional::<String>(elem, &["Snapshot"])?;
         let version = cast_optional::<String>(elem, &["Version"])?;
         let deleted = match cast_optional::<bool>(elem, &["Deleted"])? {
             Some(deleted_status) => deleted_status,

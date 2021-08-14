@@ -119,6 +119,7 @@ pub const COPY_SOURCE: &str = "x-ms-copy-source";
 pub const COPY_STATUS: &str = "x-ms-copy-status";
 pub const SERVER_ENCRYPTED: &str = "x-ms-server-encrypted";
 pub const STORAGE_ACCESS_TIER: &str = "x-ms-access-tier";
+pub const SNAPSHOT: &str = "x-ms-snapshot";
 pub const BLOB_TYPE: &str = "x-ms-blob-type";
 pub const BLOB_CONTENT_LENGTH: &str = "x-ms-blob-content-length";
 pub const BLOB_SEQUENCE_NUMBER: &str = "x-ms-blob-sequence-number";

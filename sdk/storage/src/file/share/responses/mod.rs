@@ -10,3 +10,5 @@ mod renew_lease_response;
 pub use self::renew_lease_response::RenewLeaseResponse;
 mod list_shares_response;
 pub use self::list_shares_response::ListSharesResponse;
+mod snapshot_response;
+pub use self::snapshot_response::SnapshotResponse;
